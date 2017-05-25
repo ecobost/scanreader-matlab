@@ -24,6 +24,9 @@ end
 x = scan() % 5-d array [fields, y, x, channel, frames]
 y = scan(1:2, :, :, 1, end-999: end) % 5-d array: last 1000 frames of first 2 fields on the first channel
 z = scan(2, :, :, :, :) % 4-d array: the second field (over all channels and time)
+
+scan = scanreader.read_scan('/data/my_scan_*.tif', 'float32', true)
+% scan loaded as float32 (default is int16) and adjacent fields at same depth will be joined.
 ```
 Scan objects (returned by readscan()) are indexable (as shown). Indexes can be arrays of positive integers or ':'. It should act like a Matlab 5-d array (with added automatic squeezing of single valued dimensions)---no boolean indexing, though.
 
