@@ -1,5 +1,6 @@
-classdef Field < handle
-    % FIELD Small container for field information.
+classdef Field < handle & Scanfield
+    % FIELD Two-dimensional scanning plane. An extension of scanfield with some 
+    %   functionality.
     %
     % When a field is formed by joining two or more subfields (via join_contiguous), the 
     % slice lists hold two or more slices representing where each subfield will be taken
@@ -14,19 +15,13 @@ classdef Field < handle
     %     In theory, we only need x_start and y_start but slices simplify operations.
         
     properties
-        height % height of the field in pixels
-        width % width of the field in pixels
-        depth % depth at which this field was recorded (in microns relative to absolute z)
-        y % y coordinate of the center of the field in the scan (in scan angle degrees)
-        x % x coordinate of the center of the field in the scan (in scan angle degrees)
-        heightInDegrees % height of the field in degrees of the scan angle
-        widthInDegrees % width of the field in degrees of the scan angle
         ySlices % array of slices. How to slice the page in the y axis to get this field
         % array of slices. How to slice the page in the x axis to get this field. For now,
         % all fields have the same width so all xslices are slice(None).
         xSlices
         outputYSlices % array of slices. Where to paste this field in the output field
         outputXSlices % array of slices. Where to paste this field in the output field
+        roiId % index of the ROI to which this field belong.
     end
     properties(Dependent)
         hasContiguousSubfields % true if this field is made by joining two or more subfields
@@ -34,7 +29,7 @@ classdef Field < handle
     
     methods
         function obj = Field(height, width, depth, y, x, heightInDegrees, widthInDegrees,...
-                ySlices, xSlices, outputYSlices, outputXSlices)
+                ySlices, xSlices, outputYSlices, outputXSlices, roiId)
             if nargin >= 1 obj.height = height; end
             if nargin >= 2 obj.width = width; end
             if nargin >= 3 obj.depth = depth; end
@@ -46,19 +41,14 @@ classdef Field < handle
             if nargin >= 9 obj.xSlices = xSlices; end
             if nargin >= 10 obj.outputYSlices = outputYSlices; end
             if nargin >= 11 obj.outputXSlices = outputXSlices; end
+            if nargin >= 12 obj.roiId = roiId; end
         end
         
         function hasContiguousSubfields = get.hasContiguousSubfields(obj)
             % HASCONTIGUOUSSUBFIELDS Whether field is formed by many contiguous subfields.
             hasContiguousSubfields = length(obj.xSlices) > 1;
         end
-        
-        function field = copy(obj)
-            field = scanreader.multiroi.Field(obj.height, obj.width, obj.depth, ...
-                obj.y, obj.x, obj.heightInDegrees, obj.widthInDegrees, obj.ySlices, ...
-                obj.xSlices, obj.outputYSlices, obj.outputXSlices);
-        end
-        
+       
         function areContiguous = iscontiguousto(obj, field2)
             % ISCONTIGUOUSTO Whether this field is contiguous to field2.
             areContiguous = ~(obj.typeofcontiguity(field2) == scanreader.multiroi.Position.Noncontiguous);

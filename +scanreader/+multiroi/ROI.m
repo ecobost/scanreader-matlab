@@ -58,7 +58,7 @@ classdef ROI < handle
                 sizeInY = scanfieldInfo.sizeXY(2);
                 
                 % Create scanfield
-                newScanfield = scanreader.multiroi.Field(height, width,...
+                newScanfield = scanreader.multiroi.Scanfield(height, width,...
                     scanfieldDepth, yCenter, xCenter, sizeInY, sizeInX);
                 scanfields_ = [scanfields_, newScanfield];
             end
@@ -84,12 +84,12 @@ classdef ROI < handle
             if obj.isDiscretePlaneModeOn % only check at each scanfield depth
                 for scanfield = obj.scanfields
                     if scanfield.depth == scanningDepth
-                        field = scanfield.copy();
+                        field = scanfield.asField();
                     end
                 end               
             else
                 if length(obj.scanfields) == 1 % single scanfield extending from -inf to inf
-                    field = obj.scanfields(1).copy();
+                    field = obj.scanfields(1).asField();
                     field.depth = round(scanningDepth);
                 else % interpolate between scanfields
                     scanfieldDepths = arrayfun(@(sf) sf.depth, obj.scanfields);

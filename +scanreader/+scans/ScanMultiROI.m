@@ -12,9 +12,10 @@ classdef ScanMultiROI < scanreader.scans.BaseScan
         fieldDepths % scaning depths per field
     end
     properties (SetAccess = private, Dependent)
-        nRois % number of ROI volumes
         fieldWidths % array with field widths
         fieldHeights % array with field heights
+        nRois % number of ROI volumes
+        fieldRois % list of ROIs per field
         nFlyToLines %  number of lines between images in tiff page
         fieldHeightsInMicrons
         fieldWidthsInMicrons
@@ -40,17 +41,21 @@ classdef ScanMultiROI < scanreader.scans.BaseScan
         function fieldDepths = get.fieldDepths(obj)
             fieldDepths = arrayfun(@(field) field.depth, obj.fields);
         end
-        
-        function nRois = get.nRois(obj)
-            nRois = length(obj.rois);
-        end
-        
+
         function fieldWidths = get.fieldWidths(obj)
             fieldWidths = arrayfun(@(field) field.width, obj.fields);
         end
         
         function fieldHeights = get.fieldHeights(obj)
             fieldHeights = arrayfun(@(field) field.height, obj.fields);
+        end
+        
+        function nRois = get.nRois(obj)
+            nRois = length(obj.rois);
+        end
+        
+        function fieldRois = get.fieldRois(obj)
+            fieldRois = arrayfun(@(field) field.roiId, obj.fields);
         end
         
         function flyToSeconds = get.flyToSeconds(obj)
@@ -228,7 +233,8 @@ classdef ScanMultiROI < scanreader.scans.BaseScan
             fields_ = [];
             for scanningDepth = obj.scanningDepths
                 startingLine = 1;
-                for roi = obj.rois
+                for roiId = 1:obj.nRois
+                    roi = obj.rois(roiId);
                     newField = roi.getfieldat(scanningDepth);
                     if ~isempty(newField) % if there was a field at that depth
                         if startingLine + newField.height - 1 > obj.pageHeight
@@ -244,6 +250,9 @@ classdef ScanMultiROI < scanreader.scans.BaseScan
                         % Set output xslice and yslice (where to paste it in output)
                         newField.outputYSlices = {1: newField.height};
                         newField.outputXSlices = {1: newField.width};
+                        
+                        % Set roi id
+                        newField.roiId = roiId;
                         
                         % Compute next starting y
                         startingLine = startingLine + newField.height + obj.nFlyToLines;

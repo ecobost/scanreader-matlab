@@ -6,7 +6,7 @@ We treat a scan as a collection of recording fields: rectangular planes at a giv
 We plan to support new versions of ScanImage scans as our lab starts using them. If you would like us to add support for an older (or different) version of ScanImage, send us a small sample scan.
 
 ### Installation
-Make the +scanreader/ folder accesible to Matlab.
+Make the +scanreader/ package folder accesible to Matlab.
 
 ### Usage
 ```matlab
@@ -18,7 +18,7 @@ print(scan.nFields)
 
 for i = 1:scan.nFields
     field = scan(i, :, :, :, :)
-	# process field (4-d array: [y, x, channels, frames])
+    % process field (4-d array: [y, x, channels, frames])
 end
 
 x = scan() % 5-d array [fields, y, x, channel, frames]
