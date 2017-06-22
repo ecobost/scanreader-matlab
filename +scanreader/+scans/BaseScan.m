@@ -40,6 +40,7 @@ classdef (Abstract) BaseScan < handle
         zStepInMicrons % factor to go from z depth units to microns
         scannerType % type of scanner
         scannerFrequency % scanner frequency (Hz)
+        motorPositionAtZero % motor position (x, y and z in microns) at ScanImage's (0, 0)
     end
     properties (SetAccess = private, Dependent, Hidden)
         pageHeight % height of the tiff page
@@ -106,11 +107,7 @@ classdef (Abstract) BaseScan < handle
             obj.pagesPerFile = cellfun(@(filename) length(imfinfo(filename)), obj.filenames);
             nPages = sum(obj.pagesPerFile);
             nFrames_ = nPages / (obj.nScanningDepths * obj.nChannels);
-            if mod(nFrames_, 1) ~= 0 % not an integer
-                error('updateNFrames:ValueError', ['total number of pages %d not' ...
-                    'divisible by nScanningDepths * nChannels'], nPages);
-            end
-            obj.nFrames = nFrames_;
+            obj.nFrames = floor(nFrames_); % discard last frame if incomplete
         end
                 
         function isMultiROI = get.isMultiROI(obj)
@@ -208,6 +205,17 @@ classdef (Abstract) BaseScan < handle
             pattern = 'hScan2D\.scannerFrequency = (.*)';
             match = regexp(obj.header, pattern, 'tokens', 'dotexceptnewline');
             if ~isempty(match) scannerFrequency = str2double(match{1}{1}); end
+        end
+        
+        function motorPositionAtZero = get.motorPositionAtZero(obj)
+            % Motor position (x, y and z in microns) at ScanImage's (0, 0) point.
+            % For non-multiroi scans, (0, 0) is in the center of the FOV.
+            pattern = 'hMotors\.motorPosition = (.*)';
+            match = regexp(obj.header, pattern, 'tokens', 'dotexceptnewline');
+            if ~isempty(match)
+                motorCoordinates = eval(match{1}{1});
+                motorPositionAtZero = motorCoordinates(1:3);
+            end
         end
         
         function yAngleScaleFactor = get.yAngleScaleFactor(obj)
