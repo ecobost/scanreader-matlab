@@ -29,6 +29,9 @@ z = scan(2, :, :, :, :) % 4-d array: the second field (over all channels and tim
 scan = scanreader.read_scan('/data/my_scan_*.tif', 'float32', true)
 % scan loaded as float32 (default is int16) and adjacent fields at same depth will be joined.
 ```
-Scan objects (returned by readscan()) are indexable (as shown). Indexes can be arrays of positive integers or ':'. It should act like a Matlab 5-d array (with added automatic squeezing of single valued dimensions)---no linear or boolean indexing, though.
+Scan objects (returned by `readscan()`) are indexable (as shown). Indexes can be arrays of positive integers or ':'. It should act like a Matlab 5-d array (with added automatic squeezing of single valued dimensions)---no linear or boolean indexing, though.
+
+#### Stacks
+Slow stacks record all frames in one scanning depth before moving to the next. To read stacks, use `readstack()` in place of `readscan()`.
 
 This is a Matlab port of [atlab/scanreader](https://github.com/atlab/scanreader), originally in Python.
