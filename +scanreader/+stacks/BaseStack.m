@@ -1,4 +1,4 @@
-classdef BaseStack < scanreader.scans.BaseScan
+classdef (Abstract) BaseStack < scanreader.scans.BaseScan
     % BASESTACK Properties and methods shared among all stack versions.
 
     properties (Dependent)
