@@ -21,7 +21,7 @@ try
    
     coverageFile = fullfile(resultsDir, 'cobertura.xml');
     runner.addPlugin(CodeCoveragePlugin.forPackage('scanreader',...
-        'Producing', CoberturaFormat(coverageFile),'IncludingSubfolders',true));
+        'Producing', CoberturaFormat(coverageFile),'IncludingSubpackages',true));
  
     results = runner.run(suite) 
 catch e
