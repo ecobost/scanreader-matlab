@@ -66,6 +66,12 @@ switch version
         else
             scan = scanreader.scans.Scan2017a();
         end
+    case '2017b'
+        if scanreader.tiffutils.isscanmultiROI(tiffInfo)
+            scan = scanreader.scans.ScanMultiROI(joinContiguous);
+        else
+            scan = scanreader.scans.Scan2017b();
+        end
     otherwise
         error('readscan:ScanImageVersionError', 'Sorry, ScanImage version %s is not supported', version)
 end
