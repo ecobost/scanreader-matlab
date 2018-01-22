@@ -1,7 +1,7 @@
 classdef StackTest < matlab.unittest.TestCase
     %STACKTEST Test stacks from different ScanImage versions.
     properties
-       dataDir = fullfile(getenv('WORKSPACE'),'data1');
+       dataDir = fullfile(getenv('WORKSPACE'),'data');
        stackFile5_1 % 2 channels, 60 slices
        stackFile2016b % 1 channel, 1 slice, mroiEnable = false
        stackFile5_1Multifiles % second has 10 slices
