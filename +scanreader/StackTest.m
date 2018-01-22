@@ -10,7 +10,8 @@ classdef StackTest < matlab.unittest.TestCase
     
     methods (TestClassSetup)
         function createfilenames(testCase)
-            testCase.assumeEqual(@() exist(testCase.dataDir), 7, 'The data folder could not be found');
+            testCase.assumeThat(exist(testCase.dataDir), IsEqualTo(7), ...
+                'The data could not be found. It cant be checked into the repo due to size constraints.');
             testCase.stackFile5_1 = fullfile(testCase.dataDir, 'stack_5_1_001.tif');
             testCase.stackFile2016b = fullfile(testCase.dataDir, 'stack_2016b.tif');
             testCase.stackFile5_1Multifiles = {fullfile(testCase.dataDir, 'stack_5_1_001.tif'), fullfile(testCase.dataDir, 'stack_5_1_002.tif')};
@@ -194,9 +195,14 @@ classdef StackTest < matlab.unittest.TestCase
     methods
         % Local functions
         function assertequalshapeandsum(testCase, array, expectedShape, expectedSum)
-            testCase.verifyEqual(size(array), expectedShape)
-            testCase.verifyEqual(sum(array(:)), expectedSum)
+            testCase.assertSize(array, expectedShape)
+            testCase.assertEqual(sum(array(:)), expectedSum)
         end
     end
+end
+
+% "Import" functions
+function c = IsEqualTo(varargin)
+c = matlab.unittest.constraints.IsEqualTo(varargin{:});
 end
 
