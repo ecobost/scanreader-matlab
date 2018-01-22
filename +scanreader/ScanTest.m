@@ -2,7 +2,7 @@
 classdef ScanTest < matlab.unittest.TestCase
     %SCANTEST Test scans from different ScanImage versions.
     properties
-       dataDir = fullfile(getenv('WORKSPACE'),'data');
+       dataDir = fullfile(getenv('WORKSPACE'),'data1');
        scanFile5_1 % 2 channels, 3 slices
        scanFile5_2 % 2 channels, 3 slices
        scanFile2016bMultiroi % all rois have same dimensions, 1 channel 5 slices
