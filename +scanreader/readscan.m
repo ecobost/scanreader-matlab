@@ -56,6 +56,10 @@ switch version
         scan = scanreader.scans.Scan5Point2();
     case '5.3'
         scan = scanreader.scans.Scan5Point3();
+    case '5.4'
+        scan = scanreader.scans.Scan5Point4();
+    case '5.5'
+        scan = scanreader.scans.Scan5Point5();
     case '2016b'
         if scanreader.tiffutils.isscanmultiROI(tiffInfo)
             scan = scanreader.scans.ScanMultiROI(joinContiguous);
