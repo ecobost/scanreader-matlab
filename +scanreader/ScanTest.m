@@ -2,7 +2,7 @@
 classdef ScanTest < matlab.unittest.TestCase
     %SCANTEST Test scans from different ScanImage versions.
     properties
-       dataDir = '/home/ecobost/Documents/scanreader/data'
+       dataDir = fullfile(getenv('WORKSPACE'),'data');
        scanFile5_1 % 2 channels, 3 slices
        scanFile5_2 % 2 channels, 3 slices
        scanFile5_3 % 2 channels, 1 slices
@@ -16,6 +16,8 @@ classdef ScanTest < matlab.unittest.TestCase
     
     methods (TestClassSetup)
         function createfilenames(testCase)
+            testCase.assumeThat(exist(testCase.dataDir), IsEqualTo(7), ...
+                'The data could not be found. It cant be checked into the repo due to size constraints.');
             testCase.scanFile5_1 = fullfile(testCase.dataDir, 'scan_5_1_001.tif');
             testCase.scanFile5_2 = fullfile(testCase.dataDir, 'scan_5_2.tif');
             testCase.scanFile5_3 = fullfile(testCase.dataDir, 'scan_5_3.tif');
@@ -420,9 +422,14 @@ classdef ScanTest < matlab.unittest.TestCase
     
     methods
         % Local functions
-        function assertequalshapeandsum(testCase, array, expectedShape, expectedSum)
-            testCase.verifyEqual(size(array), expectedShape)
-            testCase.verifyEqual(sum(array(:)), expectedSum)
+        function assertequalshapeandsum(testCase, array, expectedSize, expectedSum)
+            testCase.assertSize(array, expectedSize);
+            testCase.assertEqual(sum(array(:)), expectedSum);
         end
     end
+end
+
+% "import" functions
+function c = IsEqualTo(varargin)
+c = matlab.unittest.constraints.IsEqualTo(varargin{:});
 end

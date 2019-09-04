@@ -1,7 +1,7 @@
 classdef StackTest < matlab.unittest.TestCase
     %STACKTEST Test stacks from different ScanImage versions.
     properties
-       dataDir = '/home/ecobost/Documents/scanreader/data'
+       dataDir = fullfile(getenv('WORKSPACE'),'data');
        stackFile5_1 % 2 channels, 60 slices
        stackFile2016b % 1 channel, 1 slice, mroiEnable = false
        stackFile5_1Multifiles % second has 10 slices
@@ -10,6 +10,8 @@ classdef StackTest < matlab.unittest.TestCase
     
     methods (TestClassSetup)
         function createfilenames(testCase)
+            testCase.assumeThat(exist(testCase.dataDir), IsEqualTo(7), ...
+                'The data could not be found. It cant be checked into the repo due to size constraints.');
             testCase.stackFile5_1 = fullfile(testCase.dataDir, 'stack_5_1_001.tif');
             testCase.stackFile2016b = fullfile(testCase.dataDir, 'stack_2016b.tif');
             testCase.stackFile5_1Multifiles = {fullfile(testCase.dataDir, 'stack_5_1_001.tif'), fullfile(testCase.dataDir, 'stack_5_1_002.tif')};
@@ -196,9 +198,14 @@ classdef StackTest < matlab.unittest.TestCase
     methods
         % Local functions
         function assertequalshapeandsum(testCase, array, expectedShape, expectedSum)
-            testCase.verifyEqual(size(array), expectedShape)
-            testCase.verifyEqual(sum(array(:)), expectedSum)
+            testCase.assertSize(array, expectedShape)
+            testCase.assertEqual(sum(array(:)), expectedSum)
         end
     end
+end
+
+% "Import" functions
+function c = IsEqualTo(varargin)
+c = matlab.unittest.constraints.IsEqualTo(varargin{:});
 end
 
